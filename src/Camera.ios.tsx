@@ -16,6 +16,7 @@ const Camera = React.forwardRef((props: any, ref: any) => {
     },
     startCamera: () => {},
     stopCamera: () => {},
+    readImageQRCode: (base64: string) => {},
     requestDeviceCameraAuthorization: async () => {
       return await CKCameraManager.checkDeviceCameraAuthorizationStatus();
     },

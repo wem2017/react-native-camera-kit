@@ -20,6 +20,10 @@ const Camera = React.forwardRef((props, ref) => {
             var _a;
             RNCameraKitModule.stopCamera(findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
         },
+        readImageQRCode: (base64) => {
+            var _a;
+            RNCameraKitModule.readImageQRCode(base64, findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
+        },
         requestDeviceCameraAuthorization: () => {
             throw new Error('Not implemented');
         },

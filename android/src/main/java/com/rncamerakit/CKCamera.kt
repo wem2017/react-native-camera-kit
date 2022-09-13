@@ -7,7 +7,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
+import android.graphics.*
 import android.hardware.SensorManager
 import android.media.AudioManager
 import android.media.MediaActionSound
@@ -38,9 +38,9 @@ import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
+import android.os.Build
+import androidx.annotation.RequiresApi
+import androidx.camera.core.Camera
 
 class RectOverlay constructor(context: Context) :
         View(context) {
@@ -556,6 +556,18 @@ class CKCamera(context: ThemedReactContext) : FrameLayout(context), LifecycleObs
             if (viewFinder.display == null) return
 
             setupCamera()
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case unbindAll not in main thread", exc)
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun readImageQRCode(base64: String){
+        try {
+
+            val imageBytes = Base64.getDecoder().decode(base64)
+            val inputImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            
         } catch (exc: Exception) {
             Log.e(TAG, "Use case unbindAll not in main thread", exc)
         }
