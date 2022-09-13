@@ -14,6 +14,8 @@ const Camera = React.forwardRef((props: any, ref: any) => {
     capture: async () => {
       return await CKCameraManager.capture({});
     },
+    startCamera: () => {},
+    stopCamera: () => {},
     requestDeviceCameraAuthorization: async () => {
       return await CKCameraManager.checkDeviceCameraAuthorizationStatus();
     },
@@ -25,13 +27,7 @@ const Camera = React.forwardRef((props: any, ref: any) => {
   const transformedProps = _cloneDeep(props);
   _update(transformedProps, 'cameraOptions.ratioOverlayColor', (c: any) => processColor(c));
 
-  return (
-    <NativeCamera
-      style={{ minWidth: 100, minHeight: 100 }}
-      ref={nativeRef}
-      {...transformedProps}
-    />
-  );
+  return <NativeCamera style={{ minWidth: 100, minHeight: 100 }} ref={nativeRef} {...transformedProps} />;
 });
 
 Camera.defaultProps = {

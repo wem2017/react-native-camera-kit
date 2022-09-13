@@ -543,6 +543,24 @@ class CKCamera(context: ThemedReactContext) : FrameLayout(context), LifecycleObs
         return false
     }
 
+    fun stopCamera(){
+        try {
+            cameraProvider?.unbindAll()
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case unbindAll not in main thread", exc)
+        }
+    }
+
+    fun startCamera(){
+        try {
+            if (viewFinder.display == null) return
+
+            setupCamera()
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case unbindAll not in main thread", exc)
+        }
+    }
+
     companion object {
 
         private const val TAG = "CameraKit"

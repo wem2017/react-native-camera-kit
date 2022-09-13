@@ -12,9 +12,13 @@ const Camera = React.forwardRef((props: any, ref) => {
 
   React.useImperativeHandle<any, CameraApi>(ref, () => ({
     capture: async (options = {}) => {
-      // Because RN doesn't support return types for ViewManager methods
-      // we must use the general module and tell it what View it's supposed to be using
       return await RNCameraKitModule.capture(options, findNodeHandle(nativeRef.current ?? null));
+    },
+    startCamera: () => {
+      RNCameraKitModule.capture(findNodeHandle(nativeRef.current ?? null));
+    },
+    stopCamera: () => {
+      RNCameraKitModule.capture(findNodeHandle(nativeRef.current ?? null));
     },
     requestDeviceCameraAuthorization: () => {
       throw new Error('Not implemented');
