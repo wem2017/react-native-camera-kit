@@ -15,10 +15,10 @@ const Camera = React.forwardRef((props: any, ref) => {
       return await RNCameraKitModule.capture(options, findNodeHandle(nativeRef.current ?? null));
     },
     startCamera: () => {
-      RNCameraKitModule.capture(findNodeHandle(nativeRef.current ?? null));
+      RNCameraKitModule.startCamera(findNodeHandle(nativeRef.current ?? null));
     },
     stopCamera: () => {
-      RNCameraKitModule.capture(findNodeHandle(nativeRef.current ?? null));
+      RNCameraKitModule.stopCamera(findNodeHandle(nativeRef.current ?? null));
     },
     requestDeviceCameraAuthorization: () => {
       throw new Error('Not implemented');

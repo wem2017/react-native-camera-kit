@@ -14,11 +14,11 @@ const Camera = React.forwardRef((props, ref) => {
         }),
         startCamera: () => {
             var _a;
-            RNCameraKitModule.capture(findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
+            RNCameraKitModule.startCamera(findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
         },
         stopCamera: () => {
             var _a;
-            RNCameraKitModule.capture(findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
+            RNCameraKitModule.stopCamera(findNodeHandle((_a = nativeRef.current) !== null && _a !== void 0 ? _a : null));
         },
         requestDeviceCameraAuthorization: () => {
             throw new Error('Not implemented');
