@@ -37,4 +37,34 @@ class RNCameraKitModule(private val reactContext: ReactApplicationContext) : Rea
             view.capture(options.toHashMap(), promise)
         }
     }
+
+    @ReactMethod
+    fun stopCamera(viewTag: Int) {
+        val context = reactContext
+        val uiManager = context.getNativeModule(UIManagerModule::class.java)
+        context.runOnUiQueueThread {
+            val view = uiManager?.resolveView(viewTag) as CKCamera
+            view.stopCamera()
+        }
+    }
+
+    @ReactMethod
+    fun startCamera(viewTag: Int) {
+        val context = reactContext
+        val uiManager = context.getNativeModule(UIManagerModule::class.java)
+        context.runOnUiQueueThread {
+            val view = uiManager?.resolveView(viewTag) as CKCamera
+            view.startCamera()
+        }
+    }
+
+    @ReactMethod
+    fun readImageQRCode(base64: String, viewTag: Int) {
+        val context = reactContext
+        val uiManager = context.getNativeModule(UIManagerModule::class.java)
+        context.runOnUiQueueThread {
+            val view = uiManager?.resolveView(viewTag) as CKCamera
+            view.readImageQRCode(base64)
+        }
+    }
 }

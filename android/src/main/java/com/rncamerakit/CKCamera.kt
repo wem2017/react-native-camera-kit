@@ -41,6 +41,9 @@ import kotlin.math.min
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
+import android.util.Base64.*
+import androidx.annotation.RequiresApi
+import android.os.Build
 
 class RectOverlay constructor(context: Context) :
         View(context) {
@@ -543,8 +546,46 @@ class CKCamera(context: ThemedReactContext) : FrameLayout(context), LifecycleObs
         return false
     }
 
-    companion object {
+    fun stopCamera(){
+        try {
+            cameraProvider?.unbindAll()
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case unbindAll not in main thread", exc)
+        }
+    }
 
+    fun startCamera() {
+        if (hasPermissions()) {
+            setupCamera()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun readImageQRCode(base64: String){
+        try {
+            val imageBytes = Base64.getMimeDecoder().decode(base64)
+            val imageBitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+            val image = InputImage.fromBitmap(imageBitmap, 0)
+            val scanner = BarcodeScanning.getClient()
+            scanner.process(image)
+                .addOnSuccessListener { barcodes ->
+                    val strBarcodes = mutableListOf<String>()
+                    barcodes.forEach { barcode ->
+                        strBarcodes.add(barcode.rawValue ?: return@forEach)
+                    }
+                    if (strBarcodes.isNotEmpty()) {
+                        onBarcodeRead(strBarcodes)
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "Not found")
+                }
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case unbindAll not in main thread", exc)
+        }
+    }
+
+    companion object {
         private const val TAG = "CameraKit"
         private const val RATIO_4_3_VALUE = 4.0 / 3.0
         private const val RATIO_16_9_VALUE = 16.0 / 9.0

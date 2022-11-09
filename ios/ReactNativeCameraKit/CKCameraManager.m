@@ -44,6 +44,18 @@ RCT_EXPORT_METHOD(capture:(NSDictionary*)options
     }];
 }
 
+RCT_EXPORT_METHOD(stopCamera) {
+    [self.camera stopCamera];
+}
+
+RCT_EXPORT_METHOD(startCamera) {
+    [self.camera startCamera];
+}
+
+RCT_EXPORT_METHOD(readImageQRCode:(NSString*)base64) {
+    [self.camera readImageQRCode:base64];
+}
+
 RCT_EXPORT_METHOD(checkDeviceCameraAuthorizationStatus:(RCTPromiseResolveBlock)resolve
                   reject:(__unused RCTPromiseRejectBlock)reject) {
 

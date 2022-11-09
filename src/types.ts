@@ -1,5 +1,8 @@
 export type CameraApi = {
-  capture: () => Promise<{ uri: string }>,
-  requestDeviceCameraAuthorization: () => Promise<boolean>,
-  checkDeviceCameraAuthorizationStatus: () => Promise<boolean>,
+  capture: (option: any) => Promise<any>;
+  stopCamera: () => void;
+  startCamera: () => void;
+  readImageQRCode: (base64: string) => void;
+  requestDeviceCameraAuthorization: () => Promise<boolean>;
+  checkDeviceCameraAuthorizationStatus: () => Promise<boolean>;
 };

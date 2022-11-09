@@ -189,14 +189,14 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
         self.previewLayer = [[AVCaptureVideoPreviewLayer alloc] initWithSession:self.session];
         [self.layer addSublayer:self.previewLayer];
         self.previewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-        
+
 #if (TARGET_IPHONE_SIMULATOR)
         // Create mock camera layer. When a photo is taken, we capture this layer and save it in place of a
         // hardware input.
         self.mockPreview = [[CKMockPreview alloc] initWithFrame:CGRectZero];
         [self addSubview:self.mockPreview];
 #endif
-        
+
         UIView *focusView = [[UIView alloc] initWithFrame:CGRectZero];
         focusView.backgroundColor = [UIColor clearColor];
         focusView.layer.borderColor = [UIColor yellowColor].CGColor;
@@ -210,7 +210,7 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
         self.zoomMode = CKCameraZoomModeOn;
         self.flashMode = CKCameraFlashModeAuto;
         self.focusMode = CKCameraFocusModeOn;
-        
+
         self.frameColor = [UIColor whiteColor];
         self.laserColor = [UIColor redColor];
         self.frameOffset = 30;
@@ -317,7 +317,7 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
     // LANDSCAPE_LEFT: 1, // ⬅️
     // PORTRAIT_UPSIDE_DOWN: 2, // ⬇️
     // LANDSCAPE_RIGHT: 3, // ➡️
-    
+
     UIDevice * device = notification.object;
     UIDeviceOrientation orientation = device.orientation;
     if (orientation == UIDeviceOrientationPortrait) {
@@ -430,7 +430,7 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
 
 -(void)reactSetFrame:(CGRect)frame {
     [super reactSetFrame:frame];
-    
+
     self.previewLayer.frame = self.bounds;
 
 #if TARGET_IPHONE_SIMULATOR
@@ -524,12 +524,12 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
 
 
 - (void)snapStillImage:(NSDictionary*)options success:(CaptureBlock)onSuccess onError:(void (^)(NSString*))onError {
-    
+
     #if TARGET_IPHONE_SIMULATOR
     [self capturePreviewLayer:options success:onSuccess onError:onError];
     return;
     #endif
-    
+
     dispatch_async( self.sessionQueue, ^{
         AVCaptureConnection *connection = [self.stillImageOutput connectionWithMediaType:AVMediaTypeVideo];
 
@@ -564,7 +564,7 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
 
             // The sample buffer is not retained. Create image data before saving the still image to the photo library asynchronously.
             NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageDataSampleBuffer];
-            
+
             [self writeCapturedImageData:imageData onSuccess:onSuccess onError:onError];
             [self resetFocus];
         }];
@@ -812,6 +812,48 @@ RCT_ENUM_CONVERTER(CKCameraZoomMode, (@{
     }
 }
 
+- (void)stopCamera {
+    @try {
+        if(self.session.isRunning){
+            [self.session stopRunning];
+        }
+    }
+    @catch (NSException * e) {
+        NSLog(@"Exception: %@", e);
+    }
+    @finally {
+        NSLog(@"stopCamera");
+    }
+}
+
+- (void)startCamera {
+    @try {
+        if (!self.session.isRunning) {
+            [self.session startRunning];
+        }
+    }
+    @catch (NSException * e) {
+        NSLog(@"Exception: %@", e);
+    }
+    @finally {
+        NSLog(@"startCamera");
+    }
+}
+
+- (void)readImageQRCode:(NSString*)base64 {
+    @try {
+        NSArray *result = [self detectQRCode:base64];
+        CIQRCodeFeature *feature = (result != nil && [result count] != 0) ? result[0] : nil;
+        NSString *data = feature != nil ? feature.messageString : @"";
+        self.onReadCode(@{@"codeStringValue": data});
+    }
+    @catch (NSException * e) {
+        NSLog(@"Exception: %@", e);
+    }
+    @finally {
+        NSLog(@"startCamera");
+    }
+}
 
 #pragma mark - Frame for Scanner Settings
 
@@ -1103,6 +1145,32 @@ didOutputMetadataObjects:(NSArray<__kindof AVMetadataObject *> *)metadataObjects
         }
     }
     return result;
+}
+
+- (NSArray *)detectQRCode:(NSString *)base64 {
+    NSData *data = [[NSData alloc] initWithBase64EncodedString:base64 options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    UIImage *image = [UIImage imageWithData:data];
+    @autoreleasepool {
+
+        CIImage *ciImage = [CIImage imageWithCGImage:image.CGImage];
+        NSDictionary *options;
+        CIContext *context = [CIContext context];
+        options = @{CIDetectorAccuracy: CIDetectorAccuracyHigh};
+        CIDetector *qrDetector = [CIDetector detectorOfType:CIDetectorTypeQRCode
+                                                    context:context
+                                                    options:options];
+        if ([[ciImage properties] valueForKey:(NSString *) kCGImagePropertyOrientation] == nil) {
+            options = @{CIDetectorImageOrientation: @1};
+        } else {
+            options = @{CIDetectorImageOrientation: [[ciImage properties] valueForKey:(NSString *) kCGImagePropertyOrientation]};
+        }
+
+        NSArray *features = [qrDetector featuresInImage:ciImage
+                                                options:options];
+
+        return features;
+    }
 }
 
 #pragma mark - String Constants For Scanner
