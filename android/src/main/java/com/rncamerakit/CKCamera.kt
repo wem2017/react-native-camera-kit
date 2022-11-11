@@ -7,19 +7,23 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.graphics.Color
+import android.graphics.*
 import android.hardware.SensorManager
 import android.media.AudioManager
 import android.media.MediaActionSound
 import android.net.Uri
+import android.os.Build
+import android.util.Base64.*
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import androidx.annotation.ColorInt
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
+import androidx.camera.core.Camera
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.app.ActivityCompat
@@ -30,6 +34,8 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.WritableMap
 import com.facebook.react.uimanager.ThemedReactContext
 import com.facebook.react.uimanager.events.RCTEventEmitter
+import com.google.mlkit.vision.barcode.BarcodeScanning
+import com.google.mlkit.vision.common.InputImage
 import com.rncamerakit.barcode.BarcodeFrame
 import java.io.File
 import java.util.*
@@ -38,12 +44,6 @@ import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.RectF
-import android.util.Base64.*
-import androidx.annotation.RequiresApi
-import android.os.Build
 
 class RectOverlay constructor(context: Context) :
         View(context) {

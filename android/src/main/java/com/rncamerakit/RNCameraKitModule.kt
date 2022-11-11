@@ -1,5 +1,7 @@
 package com.rncamerakit
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.facebook.react.bridge.*
 import com.facebook.react.uimanager.UIManagerModule
 
@@ -58,6 +60,7 @@ class RNCameraKitModule(private val reactContext: ReactApplicationContext) : Rea
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @ReactMethod
     fun readImageQRCode(base64: String, viewTag: Int) {
         val context = reactContext
